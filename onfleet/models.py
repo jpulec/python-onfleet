@@ -120,10 +120,10 @@ class Task(object):
             state=obj['state'],
             notes=obj['notes'],
             destination=Destination.parse(obj['destination']),
-            recipients=map(Recipient.parse, obj['recipients'],
+            recipients=map(Recipient.parse, obj['recipients']),
             pickup_task=obj['pickupTask'],
             complete_after=obj['completeAfter'],
-            complete_before=obj['completeBefore'])
+            complete_before=obj['completeBefore'],
         )
 
         if 'worker' in obj and obj['worker'] is not None:
