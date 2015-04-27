@@ -74,9 +74,15 @@ class ComplexEncoder(json.JSONEncoder):
             optional_properties = {
                 'notes': obj.notes,
                 'pickupTask': obj.pickup_task,
-                'completeAfter': utils.unix_time(obj.complete_after),
-                'completeBefore': utils.unix_time(obj.complete_before),
             }
+            if obj.complete_after:
+                optional_properties.update({
+                    'completeAfter': utils.unix_time(obj.complete_after),
+                })
+            if obj.complete_before:
+                optional_properties.update({
+                    'completeBefore': utils.unix_time(obj.complete_before),
+                })
         elif isinstance(obj, models.Recipient):
             payload = {
                 'name': obj.name,
