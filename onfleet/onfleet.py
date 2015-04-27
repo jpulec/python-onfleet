@@ -69,13 +69,14 @@ class ComplexEncoder(json.JSONEncoder):
                 'executor': obj.executor,
                 'destination': obj.destination,
                 'recipients': obj.recipients,
+            }
+
+            optional_properties = {
                 'notes': obj.notes,
                 'pickupTask': obj.pickup_task,
                 'completeAfter': utils.unix_time(obj.complete_after),
                 'completeBefore': utils.unix_time(obj.complete_before),
             }
-
-            optional_properties = {}
         elif isinstance(obj, models.Recipient):
             payload = {
                 'name': obj.name,
