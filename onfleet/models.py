@@ -1,3 +1,4 @@
+import utils
 
 class Organization(object):
     def __init__(self, id=None, created_on=None, updated_on=None, name=None, email=None, timezone=None, country=None, delegatee_ids=None, image=None):
@@ -113,6 +114,7 @@ class Task(object):
 
     @classmethod
     def parse(self, obj):
+        print obj
         task = Task(
             id=obj['id'],
             created_on=obj['timeCreated'],
@@ -125,6 +127,11 @@ class Task(object):
             complete_after=obj['completeAfter'],
             complete_before=obj['completeBefore'],
         )
+        if obj['completeAfter']:
+            task.complete_after = utils.from_unix_time(obj['completeAfter'])
+
+        if obj['completeBefore']:
+            task.complete_before = utils.from_unix_time(obj['completeBefore'])
 
         if 'worker' in obj and obj['worker'] is not None:
             task.worker = Worker.parse(obj['worker'])

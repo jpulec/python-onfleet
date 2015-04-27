@@ -1,3 +1,4 @@
+import datetime
 import json
 import requests
 import models
@@ -72,17 +73,11 @@ class ComplexEncoder(json.JSONEncoder):
             }
 
             optional_properties = {
-                'notes': obj.notes,
-                'pickupTask': obj.pickup_task,
+                'notes': 'notes',
+                'pickup_task': 'pickupTask',
+                'complete_after': 'completeAfter',
+                'complete_before': 'completeBefore',
             }
-            if obj.complete_after:
-                optional_properties.update({
-                    'completeAfter': utils.unix_time(obj.complete_after),
-                })
-            if obj.complete_before:
-                optional_properties.update({
-                    'completeBefore': utils.unix_time(obj.complete_before),
-                })
         elif isinstance(obj, models.Recipient):
             payload = {
                 'name': obj.name,
@@ -103,7 +98,10 @@ class ComplexEncoder(json.JSONEncoder):
         else:
             for key, value in optional_properties.iteritems():
                 if hasattr(obj, key) and getattr(obj, key) is not None:
-                    payload[value] = getattr(obj, key)
+                    if isinstance(getattr(obj, key), datetime.datetime):
+                        payload[value] = utils.to_unix_time(getattr(obj, key))
+                    else:
+                        payload[value] = getattr(obj, key)
 
             return payload
 
