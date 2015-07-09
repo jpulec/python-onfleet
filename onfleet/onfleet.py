@@ -3,6 +3,7 @@ import json
 import requests
 import models
 import utils
+from exceptions import OnfleetDuplicateKeyException
 
 
 ONFLEET_API_ENDPOINT = "https://onfleet.com/api/v2/"
@@ -92,7 +93,6 @@ class ComplexEncoder(json.JSONEncoder):
             }
 
             optional_properties = {'phone': obj.phone}
-
         if payload is None:
             return json.JSONEncoder.default(self, obj)
         else:
@@ -124,6 +124,8 @@ class OnfleetCall(object):
         return self
 
     def __getitem__(self, k):
+        if not k:
+            raise KeyError("You can't retrieve a falsy object!")
         self.components.append(k)
         return self
 
@@ -145,7 +147,6 @@ class OnfleetCall(object):
             data = ComplexEncoder().encode(args[0])
         else:
             data = None
-
         response = fun(url, data=data, params=kwargs, auth=(self.api_key, ''), verify=False)
 
         parse_dictionary = {
@@ -162,22 +163,27 @@ class OnfleetCall(object):
             if component in self.components:
                 parse_as = parser
 
-        json_response = response.json()
+        if method.lower() != 'delete':
+            json_response = response.json()
 
-        if 'code' in json_response:
-            message = json_response['message']
+            if 'code' in json_response:
+                message = json_response['message']
+                cause = message.get('cause', '')
 
-            if 'cause' in message:
-                cause = message['cause']
-                if cause['type'] == 'duplicateKey':
+                if isinstance(cause, dict) and cause['type'] == 'duplicateKey':
                     raise OnfleetDuplicateKeyException("{}: {} (value: '{}', key: '{}')" \
                             .format(message['error'], message['message'], cause['value'], cause['key']))
-
-        if parse_response and parse_as is not None:
-            if isinstance(json_response, list):
-                return map(parse_as.parse, json_response)
+                raise Exception(
+                    "{code}:{message}:{cause}".format(
+                        code=json_response['code'],
+                        message=message['message'],
+                        cause=cause)
+                )
+            if parse_response and parse_as is not None:
+                if isinstance(json_response, list):
+                    return map(parse_as.parse, json_response)
+                else:
+                    return parse_as.parse(json_response)
             else:
-                return parse_as.parse(json_response)
-        else:
-            return json_response
-
+                return json_response
+        return None
