@@ -75,6 +75,7 @@ class ComplexEncoder(json.JSONEncoder):
             optional_properties = {
                 'notes': 'notes',
                 'pickup_task': 'pickupTask',
+                'dependencies': 'dependencies',
                 'complete_after': 'completeAfter',
                 'complete_before': 'completeBefore',
             }
