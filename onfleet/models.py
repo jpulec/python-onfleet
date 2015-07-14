@@ -1,4 +1,4 @@
-import utils
+from . import utils
 
 class Organization(object):
     def __init__(self, id=None, created_on=None, updated_on=None, name=None, email=None, timezone=None, country=None, delegatee_ids=None, image=None):
