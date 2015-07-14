@@ -1,9 +1,9 @@
 import datetime
 import json
 import requests
-import models
-import utils
-from exceptions import OnfleetDuplicateKeyException
+from . import models
+from . import utils
+from .exceptions import OnfleetDuplicateKeyException
 
 
 ONFLEET_API_ENDPOINT = "https://onfleet.com/api/v2/"
