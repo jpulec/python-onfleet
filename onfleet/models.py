@@ -116,7 +116,6 @@ class Task(object):
 
     @classmethod
     def parse(self, obj):
-        print obj
         task = Task(
             id=obj['id'],
             created_on=obj['timeCreated'],
