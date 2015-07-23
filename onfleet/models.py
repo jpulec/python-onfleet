@@ -98,6 +98,7 @@ class Task(object):
     def __init__(self, destination, recipients, notes=None, state=None,
             id=None, created_on=None, updated_on=None, merchant=None,
             executor=None, pickup_task=False, tracking_url=None,
+            worker=None,
             dependencies=None, complete_after=None, complete_before=None):
         self.id = id
         self.created_on = created_on
@@ -112,6 +113,7 @@ class Task(object):
         self.complete_after = complete_after
         self.complete_before = complete_before
         self.dependencies = dependencies
+        self.worker = worker
 
     def __repr__(self):
         return "<Task id='{}'>".format(self.id)
@@ -131,15 +133,13 @@ class Task(object):
             complete_after=obj['completeAfter'],
             complete_before=obj['completeBefore'],
             dependencies=obj['dependencies'],
+            worker=obj['worker'],
         )
         if obj['completeAfter']:
             task.complete_after = utils.from_unix_time(obj['completeAfter'])
 
         if obj['completeBefore']:
             task.complete_before = utils.from_unix_time(obj['completeBefore'])
-
-        if 'worker' in obj and obj['worker'] is not None:
-            task.worker = obj['worker']
 
         return task
 
