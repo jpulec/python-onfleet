@@ -272,7 +272,7 @@ class Worker(object):
             worker.active_task = obj['activeTask']
 
         if obj['delayTime']:
-            worker.delay_time = timedelta(milliseconds=obj['delayTime'])
+            worker.delay_time = timedelta(seconds=obj['delayTime'])
 
         return worker
 
