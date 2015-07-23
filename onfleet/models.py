@@ -1,4 +1,6 @@
+from datetime import timedelta
 from . import utils
+
 
 class Organization(object):
     def __init__(self, id=None, created_on=None, updated_on=None, name=None, email=None, timezone=None, country=None, delegatee_ids=None, image=None):
@@ -238,13 +240,16 @@ class Vehicle(object):
 
 
 class Worker(object):
-    def __init__(self, name=None, phone=None, team_ids=None, vehicle=None, id=None, tasks=None):
+    def __init__(self, name=None, phone=None, team_ids=None, vehicle=None,
+            id=None, tasks=None, delay_time=None, active_task=None):
         self.id = id
         self.name = name
         self.phone = phone
         self.team_ids = team_ids
         self.vehicle = vehicle
         self.tasks = tasks
+        self.delay_time = delay_time
+        self.active_task = active_task
 
     def __repr__(self):
         return "<Worker name='{}'>".format(self.name)
@@ -255,11 +260,19 @@ class Worker(object):
             id=obj['id'],
             name=obj['name'],
             phone=obj['phone'],
-            vehicle=Vehicle.parse(obj['vehicle'])
         )
+
+        if obj['vehicle']:
+            worker.vehicle = Vehicle.parse(obj['vehicle'])
 
         if 'teams' in obj:
             worker.team_ids = obj['teams']
+
+        if obj['activeTask']:
+            worker.active_task = obj['activeTask']
+
+        if obj['delayTime']:
+            worker.delay_time = timedelta(milliseconds=obj['delayTime'])
 
         return worker
 
