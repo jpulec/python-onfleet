@@ -1,9 +1,9 @@
 import datetime
 import json
 import requests
-from . import models
-from . import utils
-from .exceptions import OnfleetDuplicateKeyException
+import models
+import utils
+from .exceptions import OnfleetException, OnfleetDuplicateKeyException
 
 
 ONFLEET_API_ENDPOINT = "https://onfleet.com/api/v2/"
@@ -173,13 +173,10 @@ class OnfleetCall(object):
 
                 if isinstance(cause, dict) and cause['type'] == 'duplicateKey':
                     raise OnfleetDuplicateKeyException("{}: {} (value: '{}', key: '{}')" \
-                            .format(message['error'], message['message'], cause['value'], cause['key']))
-                raise Exception(
-                    "{code}:{message}:{cause}".format(
-                        code=json_response['code'],
-                        message=message['message'],
-                        cause=cause)
-                )
+                        .format(message['error'], message['message'], cause['value'], cause['key']))
+                raise OnfleetException("{}: {} ({})" \
+                    .format(message['error'], message['message'], cause))
+
             if parse_response and parse_as is not None:
                 if isinstance(json_response, list):
                     return map(parse_as.parse, json_response)
