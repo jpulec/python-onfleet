@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+import io
 import os
 from distutils.cmd import Command
 import re
@@ -11,7 +12,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-with open(os.path.join(os.path.dirname(__file__), "README.rst")) as file:
+with io.open(os.path.join(os.path.dirname(__file__), "README.rst")) as file:
     long_description = file.read()
 
     id_regex = re.compile(r"<\#([\w-]+)>")
